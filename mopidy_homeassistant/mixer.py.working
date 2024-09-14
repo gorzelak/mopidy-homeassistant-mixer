@@ -1,0 +1,82 @@
+import pykka
+import requests
+import logging
+from mopidy import mixer
+
+logger = logging.getLogger(__name__)
+
+class HomeAssistantMixer(pykka.ThreadingActor, mixer.Mixer):
+    name = "HomeAssistant"
+
+    def __init__(self, config):
+        super(HomeAssistantMixer, self).__init__()
+        self.api_url = config['homeassistant']['api_url']
+        self.api_token = config['homeassistant']['api_token']
+        self.entity_id = config['homeassistant']['media_player_entity']
+        self.headers = {
+            "Authorization": f"Bearer {self.api_token}",
+            "Content-Type": "application/json"
+        }
+
+    def get_volume(self):
+        try:
+            response = requests.get(
+                f"{self.api_url}/api/states/{self.entity_id}",
+                headers=self.headers
+            )
+            response.raise_for_status()
+            data = response.json()
+            volume = int(data['attributes']['volume_level'] * 100)
+            return volume
+        except requests.RequestException as e:
+            logger.error(f"Failed to get volume from Home Assistant: {e}")
+            return 0
+
+    def set_volume(self, volume):
+        try:
+            volume_level = volume / 100.0
+            payload = {
+              "entity_id": self.entity_id,
+              "volume_level": volume_level
+            }
+            response = requests.post(
+              f"{self.api_url}/api/services/media_player/volume_set",
+              json=payload,
+              headers=self.headers
+            )
+            response.raise_for_status()
+            logger.info(f"Volume set to {volume}% in Home Assistant")
+            return True
+        except requests.RequestException as e:
+            logger.error(f"Failed to set volume in Home Assistant: {e}")
+            return False
+
+    def get_mute(self):
+        try:
+            response = requests.get(
+                f"{self.api_url}/api/states/{self.entity_id}",
+                headers=self.headers
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data['attributes']['is_volume_muted']
+        except requests.RequestException as e:
+            logger.error(f"Failed to get mute state from Home Assistant: {e}")
+            return False
+
+    def set_mute(self, mute):
+        try:
+            payload = {
+                "entity_id": self.entity_id,
+                "is_volume_muted": mute
+            }
+            response = requests.post(
+                f"{self.api_url}/api/services/media_player/volume_mute",
+                json=payload,
+                headers=self.headers
+            )
+            response.raise_for_status()
+            logger.info(f"Mute set to {mute} in Home Assistant")
+        except requests.RequestException as e:
+            logger.error(f"Failed to set mute in Home Assistant: {e}")
+
