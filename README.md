@@ -40,6 +40,7 @@ media_player_entity = media_player.your_entity_id
 api_url: The URL of your Home Assistant instance, including the port.
 api_token: A long-lived access token generated in Home Assistant. You can create one by going to Profile > Long-Lived Access Tokens.
 media_player_entity: The entity ID of the media player in Home Assistant that you want to control (e.g., media_player.onkyo_receiver).
+```
 
 ### Usage
 
