@@ -12,7 +12,12 @@ With this extension, Mopidy can seamlessly control the volume of any Home Assist
 - **Mopidy Volume Control**: Changes made in Mopidy are sent to Home Assistant to adjust the volume of the specified media player.
 - **Easy Configuration**: Just point the mixer to a Home Assistant media player entity, and you're ready to go.
 
+## Demo
+
+Home Assistant entity (media_player) is on the left and Mopidy web interface (IRIS) on the right.
+
 ![Demo GIF](https://github.com/gorzelak/mopidy-homeassistant-mixer/raw/main/demo.gif)
+
 
 ## Requirements
 
