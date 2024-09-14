@@ -51,7 +51,7 @@ Once configured, Mopidy will automatically sync its volume with the specified Ho
 
 ### Changelog
 
-## v0.1.1
+## v0.1.2
 - Initial release of the Mopidy Home Assistant Mixer.
 - Support for real-time volume sync between Mopidy and Home Assistant media players.
 - Added WebSocket-based communication for efficient updates.
